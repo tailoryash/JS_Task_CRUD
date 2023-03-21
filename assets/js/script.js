@@ -1,8 +1,11 @@
 // validation of product form
+
 function validateForm() {
   var id = document.getElementById("product_id").value;
   var name = document.getElementById("product_name").value;
-  var image = document.getElementById("product_image").value;
+  var image = document.getElementById("product_image").files[0];
+  // console.log(image);
+  
   var price = document.getElementById("product_price").value;
   var desc = document.getElementById("product_desc").value;
 
@@ -11,12 +14,12 @@ function validateForm() {
     return false;
   }
 
-  if (name == "") {
+  if (!name) {
     alert("Name is Required");
     return false;
   }
 
-  if (image == "") {
+  if (!image) {
       alert("Please Upload Image");
   }
 
@@ -25,7 +28,7 @@ function validateForm() {
     return false;
   }
 
-  if (desc == "") {
+  if (!desc) {
     alert("Description is required");
     return false;
   }
@@ -35,6 +38,7 @@ function validateForm() {
 
 // function to show data from localStorage
 function showData() {
+  // var imagePath = document.getElementById("product_image").files[0].name;
   var productList;
   if (localStorage.getItem("productList") == null) {
     productList = [];
@@ -47,7 +51,7 @@ function showData() {
     html += "<tr>";
     html += "<td>" + product.id + "</td>";
     html += "<td>" + product.name + "</td>";
-    html += "<td>" + product.image + "</td>";
+    html += `<td><img src="${product.image}" width='30px' height='30px'/></td>`;
     html += "<td>" + product.price + "</td>";
     html += "<td>" + product.desc + "</td>";
 
@@ -66,14 +70,34 @@ function showData() {
 // loads all data of product from localStorage
 document.onload = showData();
 
+async function getBlob(file){
+  
+  return new Promise((resolve,reject) => {
+    const reader = new FileReader()
+    reader.onload = function(e) {
+      resolve(e.target.result)
+    }
+    
+    reader.readAsDataURL(file)
+  })
+
+
+
+}
+
 // adding data of product if validation == true
-function addData() {
-  if (validateForm() == true) {
+async function addData() {
+  if (validateForm()) {
     var id = document.getElementById("product_id").value;
     var name = document.getElementById("product_name").value;
-    var image = document.getElementById("product_image").value;
+    var image = document.getElementById("product_image").files[0];
+    const imageName = image.name
+    // var imagePath = document.ge0tElementById("product_image").value;
     var price = document.getElementById("product_price").value;
     var desc = document.getElementById("product_desc").value;
+
+    image = await getBlob(image)
+    console.log(image);
 
     var productList;
     if (localStorage.getItem("productList") == null) {
@@ -83,18 +107,19 @@ function addData() {
     }
 
     productList.push({
-      id: id,
-      name: name,
-      image: image,
-      price: price,
-      desc: desc,
+      id,
+      name,
+      imageName,
+      image,
+      price,
+      desc
     });
 
     localStorage.setItem("productList", JSON.stringify(productList));
     showData();
     document.getElementById("product_id").value = "";
     document.getElementById("product_name").value = "";
-    document.getElementById("product_image").value = "";
+    document.getElementById("product_image").files = (new DataTransfer()).files;
     document.getElementById("product_price").value = "";
     document.getElementById("product_desc").value = "";
   }
@@ -115,7 +140,7 @@ function deleteData(index) {
 }
 
 //function to edit and update details of product from localstorage and save changes
-function updateData(index) {
+async function updateData(index) {
   document.getElementById("Submit").style.display = "none";
   document.getElementById("Update").style.display = "block";
 
@@ -129,16 +154,26 @@ function updateData(index) {
   document.getElementById("product_id").value = productList[index].id;
   document.getElementById("product_name").value = productList[index].name;
   document.getElementById("product_price").value = productList[index].price;
+  const dataTransfer = new DataTransfer();
+  dataTransfer.items.add(new File([productList[index].image], productList[index].imageName, {
+    type: 'image/png',
+  }));
+  document.getElementById("product_image").files = dataTransfer.files
+  
   document.getElementById("product_desc").value = productList[index].desc;
 
-  document.querySelector("#Update").onclick = function () {
+  document.querySelector("#Update").onclick = async function () {
     if (validateForm() == true) {
       productList[index].id = document.getElementById("product_id").value;
       productList[index].name = document.getElementById("product_name").value;
       productList[index].price = document.getElementById("product_price").value;
-      productList[index].image = document.getElementById("product_image").value;
+      var image = document.getElementById("product_image").files[0];
+      productList[index].imageName = image.name;
+      // productList[index].image = document.getElementById("product_image").files[0].name;
+      // productList[index].imagePath = document.getElementById("product_image").value;
       productList[index].desc = document.getElementById("product_desc").value;
-
+      productList[index].image = await getBlob(image)
+    // console.log(image);
       localStorage.setItem("productList", JSON.stringify(productList));
       showData();
 
