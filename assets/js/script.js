@@ -51,7 +51,7 @@ function showData() {
     html += "<tr>";
     html += "<td>" + product.id + "</td>";
     html += "<td>" + product.name + "</td>";
-    html += `<td><img src="${product.image}" width='30px' height='30px'/></td>`;
+    html += `<td><img src="${product.image}" width='60px' height='60px'/></td>`;
     html += "<td>" + product.price + "</td>";
     html += "<td>" + product.desc + "</td>";
 
