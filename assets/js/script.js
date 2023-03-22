@@ -4,42 +4,37 @@ function validateForm() {
   var id = document.getElementById("product_id").value;
   var name = document.getElementById("product_name").value;
   var image = document.getElementById("product_image").files[0];
-//   console.log(image);
-  
+  //   console.log(image);
+
   var price = document.getElementById("product_price").value;
   var desc = document.getElementById("product_desc").value;
   let validateValue;
   let alertMsg = "";
 
-  if (id.toString().length < 3) {
-    alertMsg += "Product id must be greater than 2 digits, ";
+  let idReg = /^\d{3}$/;
+
+  if (!id.match(idReg)) {
+    alertMsg += "Product id must be 3 digit\n";
     validateValue = false;
   }
-
   if (!name) {
-    alertMsg += "Name is Required, ";
+    alertMsg += "Name is Required \n";
     validateValue = false;
-
   }
-
   if (!image) {
-      alertMsg += "Please Upload Image, ";
-      validateValue = false;
+    alertMsg += "Please Upload Image\n";
+    validateValue = false;
   }
-
   if (price < 0) {
-    alertMsg += "Price must not be Zero or less than Zero, ";
+    alertMsg += "Price must not be Zero or less than Zero\n";
     validateValue = false;
-
+  }
+  if (!desc) {
+    alertMsg += "Description is required\n";
+    validateValue = false;
   }
 
-  if (!desc) {
-    alertMsg += "Description is required";
-    validateValue = false;
-
-  } 
-
-  if(validateValue === false) alert(alertMsg);
+  if (validateValue === false) alert(alertMsg);
 
   return true;
 }
@@ -78,16 +73,15 @@ function showData() {
 // loads all data of product from localStorage
 document.onload = showData();
 
-async function getBlob(file){
-  
-  return new Promise((resolve,reject) => {
-    const reader = new FileReader()
-    reader.onload = function(e) {
-      resolve(e.target.result)
-    }
-    
-    reader.readAsDataURL(file)
-  })
+async function getBlob(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      resolve(e.target.result);
+    };
+
+    reader.readAsDataURL(file);
+  });
 }
 
 // adding data of product if validation == true
@@ -96,13 +90,13 @@ async function addData() {
     var id = document.getElementById("product_id").value;
     var name = document.getElementById("product_name").value;
     var image = document.getElementById("product_image").files[0];
-    const imageName = image.name
+    const imageName = image.name;
     // var imagePath = document.ge0tElementById("product_image").value;
     var price = document.getElementById("product_price").value;
     var desc = document.getElementById("product_desc").value;
 
-    image = await getBlob(image)
-//     console.log(image);
+    image = await getBlob(image);
+    //     console.log(image);
 
     var productList;
     if (localStorage.getItem("productList") == null) {
@@ -117,14 +111,14 @@ async function addData() {
       imageName,
       image,
       price,
-      desc
+      desc,
     });
 
     localStorage.setItem("productList", JSON.stringify(productList));
     showData();
     document.getElementById("product_id").value = "";
     document.getElementById("product_name").value = "";
-    document.getElementById("product_image").files = (new DataTransfer()).files;
+    document.getElementById("product_image").files = new DataTransfer().files;
     document.getElementById("product_price").value = "";
     document.getElementById("product_desc").value = "";
   }
@@ -132,16 +126,20 @@ async function addData() {
 
 //deleting product's details from localStorage
 function deleteData(index) {
-  var productList;
-  if (localStorage.getItem("productList") == null) {
-    productList = [];
-  } else {
-    productList = JSON.parse(localStorage.getItem("productList"));
-  }
+  var conform = confirm("do you");
 
-  productList.splice(index, 1);
-  localStorage.setItem("productList", JSON.stringify(productList));
-  showData();
+  if (conform === true) {
+    var productList;
+    if (localStorage.getItem("productList") == null) {
+      productList = [];
+    } else {
+      productList = JSON.parse(localStorage.getItem("productList"));
+    }
+
+    productList.splice(index, 1);
+    localStorage.setItem("productList", JSON.stringify(productList));
+    showData();
+  }
 }
 
 //function to edit and update details of product from localstorage and save changes
@@ -160,11 +158,13 @@ async function updateData(index) {
   document.getElementById("product_name").value = productList[index].name;
   document.getElementById("product_price").value = productList[index].price;
   const dataTransfer = new DataTransfer();
-  dataTransfer.items.add(new File([productList[index].image], productList[index].imageName, {
-    type: 'image/png',
-  }));
-  document.getElementById("product_image").files = dataTransfer.files
-  
+  dataTransfer.items.add(
+    new File([productList[index].image], productList[index].imageName, {
+      type: "image/png",
+    })
+  );
+  // document.getElementById("product_image").files = dataTransfer.files;
+
   document.getElementById("product_desc").value = productList[index].desc;
 
   document.querySelector("#Update").onclick = async function () {
@@ -177,8 +177,8 @@ async function updateData(index) {
       // productList[index].image = document.getElementById("product_image").files[0].name;
       // productList[index].imagePath = document.getElementById("product_image").value;
       productList[index].desc = document.getElementById("product_desc").value;
-      productList[index].image = await getBlob(image)
-    // console.log(image);
+      productList[index].image = await getBlob(image);
+      // console.log(image);
       localStorage.setItem("productList", JSON.stringify(productList));
       showData();
 
@@ -195,70 +195,69 @@ async function updateData(index) {
 }
 
 //filtering product by id
-function filter(){
-  var filterIn = document.getElementById("filterProduct").value;
-  var table = document.querySelectorAll("#crudOp");
-
-  for (i = 0; i < table.length; i++) {
-		var td = table[i].getElementsByTagName("td")[0];
-
-		if (td) {
-			var txtValue = td.innerHTML;
-
-			if (txtValue.indexOf(filterIn) > -1) {
-				table[i].style.display = "";
-			} else {
-				table[i].style.display = "none";
-			}
-		}
-	}
+function filter() {
+  let filter = document.getElementById("filterProduct").value;
+  let table = document.querySelector("#crudOp tbody");
+  let row = table.getElementsByTagName("tr");
+  for (let i = 0; i < row.length; i++) {
+    let td = row[i].getElementsByTagName("td")[0];
+    if (td) {
+      let idvalue = td.textContent || td.innerHTML;
+      if (idvalue.indexOf(filter) > -1) {
+        row[i].style.display = "";
+      } else {
+        row[i].style.display = "none";
+      }
+    }
+  }
 }
+//
 
 //sorting product by id, name, price
 
+function sortProduct() {
+  var productList;
+  let sortingVal = document.getElementById("sorting").value;
+  if (localStorage.getItem("productList") == null) {
+    productList = [];
+  } else {
+    productList = JSON.parse(localStorage.getItem("productList"));
+  }
 
-function sortProduct(){
-    var productList;
-    let sortingVal = document.getElementById("sorting").value;
-    if(localStorage.getItem("productList") == null){
-        productList = [];
-    }else {
-      productList = JSON.parse(localStorage.getItem("productList"));
-    }
+  switch (sortingVal) {
+    case "p_id":
+      productList.sort(byProductId);
+      break;
+    case "p_name":
+      productList.sort(byProductName);
+      break;
+    case "p_price":
+      productList.sort(byProductPrice);
+      break;
+  }
 
-    switch(sortingVal){
-      case "p_id":
-        productList.sort(byProductId);
-        break;
-      case "p_name": 
-        productList.sort(byProductName);
-        break;
-      case "p_price":
-        productList.sort(byProductPrice);
-        break;
-    }
+  localStorage.setItem("productList", JSON.stringify(productList));
 
-    localStorage.setItem("productList", JSON.stringify(productList));
-    location.reload();
-    showData();
+  showData();
+  location.reload();
 }
 
-function byProductId(a, b){
+function byProductId(a, b) {
   return a.id - b.id;
 }
 
-function byProductName(a, b){
-  if(a.name < b.name) return -1;
-  else if(a.name > b.name) return 1;
+function byProductName(a, b) {
+  if (a.name < b.name) return -1;
+  else if (a.name > b.name) return 1;
   else return 0;
 }
 
-function byProductPrice(a, b){
+function byProductPrice(a, b) {
   return a.price - b.price;
 }
 
 //clear all localstorage data
-function clearall(){
+function clearall() {
   localStorage.clear();
   window.location.reload();
   showData();
