@@ -8,7 +8,7 @@ function validateForm() {
 
   var price = document.getElementById("product_price").value;
   var desc = document.getElementById("product_desc").value;
-  let validateValue;
+  let validateValue = true;
   let alertMsg = "";
 
   let idReg = /^\d{3}$/;
@@ -16,27 +16,23 @@ function validateForm() {
   if (!id.match(idReg)) {
     alertMsg += "Product id must be 3 digit\n";
     validateValue = false;
-  }
-  if (!name) {
+  } else if (!name) {
     alertMsg += "Name is Required \n";
     validateValue = false;
-  }
-  if (!image) {
+  } else if (!image) {
     alertMsg += "Please Upload Image\n";
     validateValue = false;
-  }
-  if (price < 0) {
+  } else if (price < 0 || !price) {
     alertMsg += "Price must not be Zero or less than Zero\n";
     validateValue = false;
-  }
-  if (!desc) {
+  } else if (!desc) {
     alertMsg += "Description is required\n";
     validateValue = false;
   }
 
-  if (validateValue === false) alert(alertMsg);
+  if (!validateValue) alert(alertMsg);
 
-  return true;
+  return validateValue;
 }
 
 // function to show data from localStorage
