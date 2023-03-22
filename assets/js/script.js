@@ -126,16 +126,16 @@ async function addData() {
 
 //deleting product's details from localStorage
 function deleteData(index) {
-  var conform = confirm("do you");
-
-  if (conform === true) {
-    var productList;
-    if (localStorage.getItem("productList") == null) {
-      productList = [];
-    } else {
-      productList = JSON.parse(localStorage.getItem("productList"));
-    }
-
+  var productList;
+  if (localStorage.getItem("productList") == null) {
+    productList = [];
+  } else {
+    productList = JSON.parse(localStorage.getItem("productList"));
+  }
+  let confirmMsg = confirm(
+    `Do you want to delete Product-Id - ${productList[index].id} ?`
+  );
+  if (confirmMsg) {
     productList.splice(index, 1);
     localStorage.setItem("productList", JSON.stringify(productList));
     showData();
