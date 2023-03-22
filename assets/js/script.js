@@ -4,14 +4,14 @@ function validateForm() {
   var id = document.getElementById("product_id").value;
   var name = document.getElementById("product_name").value;
   var image = document.getElementById("product_image").files[0];
-  // console.log(image);
+  console.log(image);
   
   var price = document.getElementById("product_price").value;
   var desc = document.getElementById("product_desc").value;
   let validateValue;
   let alertMsg = "";
 
-  if (id.toString().length < 2) {
+  if (id.toString().length < 3) {
     alertMsg += "Product id must be greater than 2 digits, ";
     validateValue = false;
   }
@@ -88,9 +88,6 @@ async function getBlob(file){
     
     reader.readAsDataURL(file)
   })
-
-
-
 }
 
 // adding data of product if validation == true
