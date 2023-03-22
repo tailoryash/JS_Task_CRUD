@@ -4,7 +4,7 @@ function validateForm() {
   var id = document.getElementById("product_id").value;
   var name = document.getElementById("product_name").value;
   var image = document.getElementById("product_image").files[0];
-  console.log(image);
+//   console.log(image);
   
   var price = document.getElementById("product_price").value;
   var desc = document.getElementById("product_desc").value;
@@ -102,7 +102,7 @@ async function addData() {
     var desc = document.getElementById("product_desc").value;
 
     image = await getBlob(image)
-    console.log(image);
+//     console.log(image);
 
     var productList;
     if (localStorage.getItem("productList") == null) {
