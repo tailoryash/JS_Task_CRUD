@@ -8,30 +8,38 @@ function validateForm() {
   
   var price = document.getElementById("product_price").value;
   var desc = document.getElementById("product_desc").value;
+  let validateValue;
+  let alertMsg = "";
 
   if (id.toString().length < 2) {
-    alert("Product id must be greater than 2 digits");
-    return false;
+    alertMsg += "Product id must be greater than 2 digits, ";
+    validateValue = false;
   }
 
   if (!name) {
-    alert("Name is Required");
-    return false;
+    alertMsg += "Name is Required, ";
+    validateValue = false;
+
   }
 
   if (!image) {
-      alert("Please Upload Image");
+      alertMsg += "Please Upload Image, ";
+      validateValue = false;
   }
 
   if (price < 0) {
-    alert("Price must not be Zero or less than Zero");
-    return false;
+    alertMsg += "Price must not be Zero or less than Zero, ";
+    validateValue = false;
+
   }
 
   if (!desc) {
-    alert("Description is required");
-    return false;
-  }
+    alertMsg += "Description is required";
+    validateValue = false;
+
+  } 
+
+  if(validateValue === false) alert(alertMsg);
 
   return true;
 }
